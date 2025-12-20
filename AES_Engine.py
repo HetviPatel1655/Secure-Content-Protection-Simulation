@@ -29,7 +29,7 @@ def aes_encrypt_ctr(plaintext, key):
     ctr = Counter.new(64, prefix=nonce)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
     ciphertext = cipher.encrypt(plaintext)
-    return ciphertext,nonce
+    return nonce, ciphertext
 
 # CTR MODE DECRYPTION
 def aes_decrypt_ctr(nonce, ciphertext, key):
@@ -52,10 +52,23 @@ def aes_decrypt_cfb(iv, ciphertext, key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
+#OFB ENCRYPTION
+def aes_encrypt_ofb(plaintext, key):
+    iv = get_random_bytes(AES.block_size)
+    cipher = AES.new(key,AES.MODE_OFB, iv)
+    ciphertext = cipher.encrypt(plaintext)
+    return iv, ciphertext
+
+#OFB DECRYPTION
+def aes_decrypt_ofb(iv, ciphertext, key):
+    cipher = AES.new(key, AES.MODE_OFB, iv)
+    plaintext = cipher.decrypt(ciphertext)
+    return plaintext
+
 
 print("AES Encryption/Decryption Example : ")
 key = get_random_bytes(16) # AES-128
-data = b'This is a test message for AES encryption!'
+data = 'This is a test message for AES encryption!'.encode()
 print("Original Data:", data)
 
 # CBC Mode
@@ -65,7 +78,7 @@ decrypted_cbc = aes_decrypt_cbc(encrypted_cbc_iv , encrypted_cbc, key)
 print("CBC Decrypted:", decrypted_cbc)
 
 # CTR Mode
-encrypted_ctr, nonce = aes_encrypt_ctr(data, key)
+nonce, encrypted_ctr = aes_encrypt_ctr(data, key)
 print("CTR Encrypted:", encrypted_ctr)
 decrypted_ctr = aes_decrypt_ctr(nonce, encrypted_ctr, key)
 print("CTR Decrypted:", decrypted_ctr)
@@ -75,3 +88,9 @@ encrypted_cfb_iv, encrypted_cfb = aes_encrypt_cfb(data, key)
 print("CFB Encrypted: ", encrypted_cfb)
 decrypted_cfb = aes_decrypt_cfb(encrypted_cfb_iv, encrypted_cfb, key)
 print("CFB Decrypted:", decrypted_cfb) 
+
+#OFB Mode
+encrypted_iv, encrrypted_ofb = aes_encrypt_ofb(data, key)
+print("OFB Encrypted: ",encrrypted_ofb)
+decrypted_ofb = aes_decrypt_ofb(encrypted_iv, encrrypted_ofb, key)
+print("OFB Decrypted:",decrypted_ofb)
