@@ -32,7 +32,7 @@ def aes_encrypt_ctr(plaintext, key):
     return ciphertext,nonce
 
 # CTR MODE DECRYPTION
-def aes_decrypt_ctr(ciphertext, nonce, key):
+def aes_decrypt_ctr(nonce, ciphertext, key):
     print("Decrypting in CTR mode")
     ctr = Counter.new(64, prefix=nonce)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
@@ -67,7 +67,7 @@ print("CBC Decrypted:", decrypted_cbc)
 # CTR Mode
 encrypted_ctr, nonce = aes_encrypt_ctr(data, key)
 print("CTR Encrypted:", encrypted_ctr)
-decrypted_ctr = aes_decrypt_ctr(encrypted_ctr, nonce, key)
+decrypted_ctr = aes_decrypt_ctr(nonce, encrypted_ctr, key)
 print("CTR Decrypted:", decrypted_ctr)
 
 #CFB Mode
