@@ -39,6 +39,19 @@ def aes_decrypt_ctr(ciphertext, nonce, key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
+#CFB ENCRYPTION
+def aes_encrypt_cfb(plaintext, key):
+    iv = get_random_bytes(AES.block_size)
+    cipher = AES.new(key,AES.MODE_CFB, iv)
+    ciphertext = cipher.encrypt(plaintext)
+    return iv, ciphertext
+
+#CFB DECRYPTION
+def aes_decrypt_cfb(iv, ciphertext, key):
+    cipher = AES.new(key, AES.MODE_CFB, iv)
+    plaintext = cipher.decrypt(ciphertext)
+    return plaintext
+
 
 print("AES Encryption/Decryption Example : ")
 key = get_random_bytes(16) # AES-128
@@ -56,3 +69,9 @@ encrypted_ctr, nonce = aes_encrypt_ctr(data, key)
 print("CTR Encrypted:", encrypted_ctr)
 decrypted_ctr = aes_decrypt_ctr(encrypted_ctr, nonce, key)
 print("CTR Decrypted:", decrypted_ctr)
+
+#CFB Mode
+encrypted_cfb_iv, encrypted_cfb = aes_encrypt_cfb(data, key)
+print("CFB Encrypted: ", encrypted_cfb)
+decrypted_cfb = aes_decrypt_cfb(encrypted_cfb_iv, encrypted_cfb, key)
+print("CFB Decrypted:", decrypted_cfb) 
