@@ -13,14 +13,13 @@ def aes_encrypt_cbc(plaintext, key):
     iv = get_random_bytes(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     ciphertext = cipher.encrypt(pad(plaintext,AES.block_size))
-    return iv + ciphertext  # Prepend IV for use in decryption
+    return iv , ciphertext  # Prepend IV for use in decryption
 
 # CBC MODE DECRYPTION
-def aes_decrypt_cbc(ciphertext, key):
+def aes_decrypt_cbc(iv, ciphertext, key):
     print("Decrypting in CBC mode")
-    iv = ciphertext[:AES.block_size]
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    plaintext = unpad(cipher.decrypt(ciphertext[AES.block_size:]), AES.block_size)
+    plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
     return plaintext
 
 # CTR MODE ENCRYPTION   
@@ -43,13 +42,13 @@ def aes_decrypt_ctr(ciphertext, nonce, key):
 
 print("AES Encryption/Decryption Example : ")
 key = get_random_bytes(16) # AES-128
-data = 'This is a test message for AES encryption!'.encode()
+data = b'This is a test message for AES encryption!'
 print("Original Data:", data)
 
 # CBC Mode
-encrypted_cbc = aes_encrypt_cbc(data, key)
+encrypted_cbc_iv, encrypted_cbc = aes_encrypt_cbc(data, key)
 print("CBC Encrypted:", encrypted_cbc)
-decrypted_cbc = aes_decrypt_cbc(encrypted_cbc, key)
+decrypted_cbc = aes_decrypt_cbc(encrypted_cbc_iv , encrypted_cbc, key)
 print("CBC Decrypted:", decrypted_cbc)
 
 # CTR Mode
