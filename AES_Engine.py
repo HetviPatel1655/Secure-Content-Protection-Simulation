@@ -9,7 +9,6 @@ from Crypto.Util import Counter
 
 # CBC MODE ENCRYPTION
 def aes_encrypt_cbc(plaintext, key):
-    print("Encrypting in CBC mode")
     iv = get_random_bytes(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     ciphertext = cipher.encrypt(pad(plaintext,AES.block_size))
@@ -17,14 +16,12 @@ def aes_encrypt_cbc(plaintext, key):
 
 # CBC MODE DECRYPTION
 def aes_decrypt_cbc(iv, ciphertext, key):
-    print("Decrypting in CBC mode")
     cipher = AES.new(key, AES.MODE_CBC, iv)
     plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
     return plaintext
 
 # CTR MODE ENCRYPTION   
 def aes_encrypt_ctr(plaintext, key):
-    print("Encrypting in CTR mode")
     nonce = get_random_bytes(8)
     ctr = Counter.new(64, prefix=nonce)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
@@ -33,7 +30,6 @@ def aes_encrypt_ctr(plaintext, key):
 
 # CTR MODE DECRYPTION
 def aes_decrypt_ctr(nonce, ciphertext, key):
-    print("Decrypting in CTR mode")
     ctr = Counter.new(64, prefix=nonce)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
     plaintext = cipher.decrypt(ciphertext)
@@ -65,32 +61,3 @@ def aes_decrypt_ofb(iv, ciphertext, key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
-
-print("AES Encryption/Decryption Example : ")
-key = get_random_bytes(16) # AES-128
-data = 'This is a test message for AES encryption!'.encode()
-print("Original Data:", data)
-
-# CBC Mode
-encrypted_cbc_iv, encrypted_cbc = aes_encrypt_cbc(data, key)
-print("CBC Encrypted:", encrypted_cbc)
-decrypted_cbc = aes_decrypt_cbc(encrypted_cbc_iv , encrypted_cbc, key)
-print("CBC Decrypted:", decrypted_cbc)
-
-# CTR Mode
-nonce, encrypted_ctr = aes_encrypt_ctr(data, key)
-print("CTR Encrypted:", encrypted_ctr)
-decrypted_ctr = aes_decrypt_ctr(nonce, encrypted_ctr, key)
-print("CTR Decrypted:", decrypted_ctr)
-
-#CFB Mode
-encrypted_cfb_iv, encrypted_cfb = aes_encrypt_cfb(data, key)
-print("CFB Encrypted: ", encrypted_cfb)
-decrypted_cfb = aes_decrypt_cfb(encrypted_cfb_iv, encrypted_cfb, key)
-print("CFB Decrypted:", decrypted_cfb) 
-
-#OFB Mode
-encrypted_iv, encrrypted_ofb = aes_encrypt_ofb(data, key)
-print("OFB Encrypted: ",encrrypted_ofb)
-decrypted_ofb = aes_decrypt_ofb(encrypted_iv, encrrypted_ofb, key)
-print("OFB Decrypted:",decrypted_ofb)
