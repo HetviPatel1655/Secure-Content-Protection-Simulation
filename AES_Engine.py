@@ -61,3 +61,15 @@ def aes_decrypt_ofb(iv, ciphertext, key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
+#GCM ENCRYPTION
+def aes_encrypt_gcm(plaintext, key):
+    nonce = get_random_bytes(12)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    ciphertext, tag = cipher.encrypt(plaintext), cipher.digest()
+    return nonce, ciphertext, tag
+
+#GCM DECRYPTION
+def aes_decrypt_gcm(nonce, ciphertext, key, tag):
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+    return plaintext
