@@ -1,5 +1,5 @@
-from AES_Engine import *
-
+from aes_engine import *
+from hybrid_encryption import *
 from Crypto.Random import get_random_bytes
 
 print("\nAES Encryption/Decryption Example : ")
@@ -36,3 +36,14 @@ encrypted_gcm, nonce_gcm, tag = aes_encrypt_gcm(data, key)
 print("\nGCM Encrypted: ", encrypted_gcm)
 decrypted_gcm = aes_decrypt_gcm(encrypted_gcm, nonce_gcm, key, tag)
 print("GCM Decrypted:", decrypted_gcm.decode())
+
+print("\n\nHybrid Encryption Example : ")
+key = RSA.generate(2048)
+private_key = key.export_key()
+public_key = key.publickey().export_key()
+# Encrypt the data
+encrypted_blob = encrypt_content(data, public_key)
+print("\nEncrypted Blob:", encrypted_blob)
+# Decrypt the data
+decrypted_data = decrypt_content(encrypted_blob, private_key)
+print("\nDecrypted Data:", decrypted_data.decode())

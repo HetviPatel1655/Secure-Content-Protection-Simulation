@@ -9,7 +9,7 @@ from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Util.Padding import pad,unpad
-from AES_Engine import aes_encrypt_gcm, aes_decrypt_gcm
+from aes_engine import aes_encrypt_gcm, aes_decrypt_gcm
 
 # Function to encrypt content using AES-256-GCM and wrap the AES key using RSA-OAEP
 def encrypt_content(content_bytes, rsa_public_key):
@@ -52,13 +52,5 @@ data = 'This is a test message for Robust Hybrid Encryption System!'.encode()
 print("\nOriginal Data:", data)
 # Example usage
 # Generate RSA key pair
-key = RSA.generate(2048)
-private_key = key.export_key()
-public_key = key.publickey().export_key()
-# Encrypt the data
-encrypted_blob = encrypt_content(data, public_key)
-print("\nEncrypted Blob:", encrypted_blob)
-# Decrypt the data
-decrypted_data = decrypt_content(encrypted_blob, private_key)
-print("\nDecrypted Data:", decrypted_data.decode())
+
 
