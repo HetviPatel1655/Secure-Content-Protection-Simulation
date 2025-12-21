@@ -30,3 +30,10 @@ encrypted_iv, encrrypted_ofb = aes_encrypt_ofb(data, key)
 print("\nOFB Encrypted: ",encrrypted_ofb)
 decrypted_ofb = aes_decrypt_ofb(encrypted_iv, encrrypted_ofb, key)
 print("OFB Decrypted:",decrypted_ofb)
+
+
+#GCM Mode
+nonce_gcm, encrypted_gcm, tag = aes_encrypt_gcm(data, key)
+print("\nGCM Encrypted: ", encrypted_gcm)
+decrypted_gcm = aes_decrypt_gcm(nonce_gcm, encrypted_gcm, key, tag)
+print("GCM Decrypted:", decrypted_gcm)
