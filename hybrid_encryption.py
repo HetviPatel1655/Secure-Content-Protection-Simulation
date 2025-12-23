@@ -48,9 +48,4 @@ def decrypt_content(encrypted_blob, rsa_private_key):
     return decrypt_content
 
 
-data = 'This is a test message for Robust Hybrid Encryption System!'.encode()
-print("\nOriginal Data:", data)
-# Example usage
-# Generate RSA key pair
-
 

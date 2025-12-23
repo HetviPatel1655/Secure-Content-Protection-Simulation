@@ -1,49 +1,92 @@
+import os
 from aes_engine import *
 from hybrid_encryption import *
 from Crypto.Random import get_random_bytes
+from Crypto.PublicKey import RSA
 
-print("\nAES Encryption/Decryption Example : ")
-key = get_random_bytes(16) # AES-128
-data = 'This is a test message for AES encryption!'.encode()
-print("\nOriginal Data:", data)
+def print_sizes(stage, before=None, after=None):
+    print(f"\n[{stage}]")
+    if before is not None:
+        print("Input size :", before, "bytes")
+    if after is not None:
+        print("Output size:", after, "bytes")
 
-# CBC Mode
-encrypted_cbc, encrypted_cbc_iv = aes_encrypt_cbc(data, key)
-print("\nCBC Encrypted:", encrypted_cbc)
-decrypted_cbc = aes_decrypt_cbc(encrypted_cbc, encrypted_cbc_iv, key)
-print("CBC Decrypted:", decrypted_cbc.decode())
 
-# CTR Mode
-encrypted_ctr, nonce_ctr = aes_encrypt_ctr(data, key)
-print("\nCTR Encrypted:", encrypted_ctr)
-decrypted_ctr = aes_decrypt_ctr(encrypted_ctr, nonce_ctr, key)
-print("CTR Decrypted:", decrypted_ctr.decode())
+print("\nAES Encryption/Decryption Demo with Multiple Modes")
 
-#CFB Mode
-encrypted_cfb, encrypted_cfb_iv = aes_encrypt_cfb(data, key)
-print("\nCFB Encrypted: ", encrypted_cfb)
-decrypted_cfb = aes_decrypt_cfb(encrypted_cfb, encrypted_cfb_iv, key)
-print("CFB Decrypted:", decrypted_cfb.decode()) 
+print("\nEnter the number of Mode that you want to use for AES Encryption/Decryption:")
+print("\n1. CBC Mode\n2. CTR Mode\n3. CFB Mode\n4. OFB Mode\n5. GCM Mode\n6. Hybrid Encryption (RSA + AES)\n")
+mode = int(input("Enter your choice (1-6): "))
 
-#OFB Mode
-encrypted_ofb, encrypted_ofb_iv = aes_encrypt_ofb(data, key)
-print("\nOFB Encrypted: ",encrypted_ofb)
-decrypted_ofb = aes_decrypt_ofb(encrypted_ofb, encrypted_ofb_iv, key)
-print("OFB Decrypted:",decrypted_ofb.decode())
+print("\nEnter the file name that you want to encrypt:")
+file_name = input("File name: ")
+if not file_name:
+    print("No file name provided. Exiting.")
+    exit()
+elif not os.path.isfile(file_name):
+    print("File does not exist. Exiting.")
+    exit()
+else:
+    with open(file_name, 'rb') as f:
+        file_data = f.read()
+    if not file_data:
+        print("File is empty or could not be read. Exiting.")
+        exit()  
 
-#GCM Mode
-encrypted_gcm, nonce_gcm, tag = aes_encrypt_gcm(data, key)
-print("\nGCM Encrypted: ", encrypted_gcm)
-decrypted_gcm = aes_decrypt_gcm(encrypted_gcm, nonce_gcm, key, tag)
-print("GCM Decrypted:", decrypted_gcm.decode())
 
-print("\n\nHybrid Encryption Example : ")
-key = RSA.generate(2048)
-private_key = key.export_key()
-public_key = key.publickey().export_key()
-# Encrypt the data
-encrypted_blob = encrypt_content(data, public_key)
-print("\nEncrypted Blob:", encrypted_blob)
-# Decrypt the data
-decrypted_data = decrypt_content(encrypted_blob, private_key)
-print("\nDecrypted Data:", decrypted_data.decode())
+if (mode == 1):
+    print("\nCBC Mode Selected.")
+    key = get_random_bytes(16) # AES-128
+    encrypted_data, iv = aes_encrypt_cbc(file_data, key)
+    decrypted_data = aes_decrypt_cbc(encrypted_data, iv, key)
+    print_sizes("CBC Encryption", before=len(file_data), after=len(encrypted_data))
+    print_sizes("CBC Decryption", after=len(decrypted_data))
+elif (mode) == 2:
+    print("\nCTR Mode Selected.")
+    key = get_random_bytes(16) 
+    encrypted_data, nonce = aes_encrypt_ctr(file_data, key)
+    decrypted_data = aes_decrypt_ctr(encrypted_data, nonce, key)
+    print_sizes("CTR Encryption", before=len(file_data), after=len(encrypted_data))
+    print_sizes("CTR Decryption", after=len(decrypted_data))
+elif (mode) == 3:
+    print("\nCFB Mode Selected.")
+    key = get_random_bytes(16) 
+    encrypted_data, iv = aes_encrypt_cfb(file_data, key)
+    print_sizes("CFB Encryption", before=len(file_data), after=len(encrypted_data))
+    decrypted_data = aes_decrypt_cfb(encrypted_data, iv, key)
+    print_sizes("CFB Decryption", after=len(decrypted_data))
+elif (mode) == 4:
+    print("\nOFB Mode Selected.")
+    key = get_random_bytes(16) 
+    encrypted_data, iv = aes_encrypt_ofb(file_data, key)
+    print_sizes("OFB Encryption", before=len(file_data), after=len(encrypted_data))
+    decrypted_data = aes_decrypt_ofb(encrypted_data, iv, key)
+    print_sizes("OFB Decryption", after=len(decrypted_data))
+elif (mode) == 5:
+    print("\nGCM Mode Selected.")
+    key = get_random_bytes(16) 
+    encrypted_data, nonce, tag = aes_encrypt_gcm(file_data, key)
+    print_sizes("GCM Encryption", before=len(file_data), after=len(encrypted_data))
+    decrypted_data = aes_decrypt_gcm(encrypted_data, nonce, key, tag)
+    print_sizes("GCM Decryption", after=len(decrypted_data))
+elif (mode) == 6:
+    print("\nHybrid Encryption Selected.")
+    rsa_key = RSA.generate(2048)
+    private_key = rsa_key.export_key()
+    public_key = rsa_key.publickey().export_key()
+    encrypted_data = encrypt_content(file_data, public_key)
+    print_sizes("Hybrid Encryption", before=len(file_data), after=len(encrypted_data['ciphertext']))
+    decrypted_data = decrypt_content(encrypted_data, private_key)
+    print_sizes("Hybrid Decryption", after=len(decrypted_data))
+else:
+    print("\nInvalid choice. Exiting.")
+    exit()
+
+if mode != 6:
+    with open('encrypted_output.bin', 'wb') as f:
+        f.write(encrypted_data)
+    with open('decrypted_output.bin', 'wb') as f:
+        f.write(decrypted_data)
+    print("\nEncryption and Decryption completed. \nCheck 'encrypted_output.bin' and 'decrypted_output.bin'.")
+else:
+    print("\nHybrid encryption and decryption completed. \nCheck 'decrypted_output.bin'.")
