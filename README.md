@@ -28,15 +28,18 @@ The project is designed as a **learning-oriented simulation** and does not claim
 
 ## Project Structure
 
+```text
 secure-content-protection-simulation/
 │
-├── aes_engine.py               # AES encryption/decryption implementations
-├── hybrid_encryption.py        # Hybrid encryption (AES + RSA)
-├── digital_signature.py        # RSA-PSS digital signatures
-├── demo.py                     # Demonstration script
-├── sample.txt                  # Sample input file
+├── aes_engine.py          # AES encryption/decryption implementations
+├── hybrid_encryption.py  # Hybrid encryption (AES + RSA)
+├── digital_signature.py  # RSA-PSS digital signatures
+├── demo.py               # Demonstration script
+├── sample.txt            # Sample input file
 ├── README.md
 └── .gitignore
+```
+
 
 ---
 
