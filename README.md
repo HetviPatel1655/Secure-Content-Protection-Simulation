@@ -1,7 +1,6 @@
-# Secure-Content-Protection-Simulation# Secure-Content-Protection-Simulation
 # Secure Content Protection Simulation
 
-This repository contains an ongoing internship project focused on implementing core cryptography and Digital Rights Management (DRM) fundamentals using Python and the PyCryptodome library.
+This repository contains an ongoing project focused on implementing core cryptography and Digital Rights Management (DRM) fundamentals using Python and the PyCryptodome library.
 
 The project is designed as a **learning-oriented simulation** and does not claim to be a production-ready DRM system.
 
@@ -28,6 +27,7 @@ The project is designed as a **learning-oriented simulation** and does not claim
 ---
 
 ## Project Structure
+
 secure-content-protection-simulation/
 │
 ├── aes_engine.py # AES encryption/decryption implementations
@@ -52,4 +52,4 @@ secure-content-protection-simulation/
 4. Select the encryption mode and input file when prompted
 
 Limitations :
-This project is intended for educational and internship learning purposes No license server, access policy enforcement, or secure key storage Not intended for production DRM usage
+This project is intended for educational learning purposes No license server, access policy enforcement, or secure key storage Not intended for production DRM usage
