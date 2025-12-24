@@ -22,6 +22,7 @@ def aes_decrypt_cbc(ciphertext, iv, key):
 
 # CTR MODE ENCRYPTION   
 def aes_encrypt_ctr(plaintext, key):
+    # 64-bit counter with 64-bit nonce prefix (recommended pattern)
     nonce = get_random_bytes(8)
     ctr = Counter.new(64, prefix=nonce)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
