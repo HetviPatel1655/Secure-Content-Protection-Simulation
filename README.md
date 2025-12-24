@@ -53,8 +53,3 @@ secure-content-protection-simulation/
 
 Limitations :
 This project is intended for educational and internship learning purposes No license server, access policy enforcement, or secure key storage Not intended for production DRM usage
-
-
-Then:
-```bash
-git add README.md
