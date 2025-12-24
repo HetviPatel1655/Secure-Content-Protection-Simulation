@@ -3,6 +3,7 @@ from aes_engine import *
 from hybrid_encryption import *
 from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
+from digital_signature import *
 
 def print_sizes(stage, before=None, after=None):
     print(f"\n[{stage}]")
@@ -32,7 +33,6 @@ else:
     if not file_data:
         print("File is empty or could not be read. Exiting.")
         exit()  
-
 
 if (mode == 1):
     print("\nCBC Mode Selected.")
@@ -87,6 +87,36 @@ if mode != 6:
         f.write(encrypted_data)
     with open('decrypted_output.bin', 'wb') as f:
         f.write(decrypted_data)
-    print("\nEncryption and Decryption completed. \nCheck 'encrypted_output.bin' and 'decrypted_output.bin'.")
+    print("\nEncryption and Decryption completed. \nCheck 'encrypted_output.bin' and 'decrypted_output.bin'.\n")
 else:
-    print("\nHybrid encryption and decryption completed. \nCheck 'decrypted_output.bin'.")
+    print("\nHybrid encryption and decryption completed. \nCheck 'decrypted_output.bin'.\n")
+
+# Demonstration of Digital Signature and Verification
+# Separate RSA keys used for encryption and signing (recommended practice)
+
+print("\nDigital Signature and Verification Demo\n")
+rsa_key = RSA.generate(2048)
+private_key = rsa_key.export_key()
+public_key = rsa_key.publickey().export_key()
+
+# Sign the data
+signature = sign_data(file_data, private_key)
+print("Signature generated.")
+
+# Verify the signature (should be valid)
+is_valid = verify_signature(file_data, signature, public_key)
+print(f"Signature valid: {is_valid}")
+
+# Tamper with the data
+tampered_data = file_data[:-1] + bytes([file_data[-1] ^ 0x01])
+
+# Verify the signature with tampered data (should be invalid)
+is_valid_tampered = verify_signature(tampered_data, signature, public_key)
+print(f"Signature valid after tampering with data: {is_valid_tampered}")
+
+# Tamper with the signature
+tampered_signature = signature[:-1] + bytes([signature[-1] ^ 0x01])  # Flip last bit
+
+# Verify the tampered signature (should be invalid)
+is_valid_tampered_sig = verify_signature(file_data, tampered_signature, public_key)
+print(f"Signature valid after tampering with signature: {is_valid_tampered_sig}")
