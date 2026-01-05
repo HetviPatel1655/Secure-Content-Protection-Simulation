@@ -1,6 +1,7 @@
 # Task 1: Comprehensive AES Implementation
 # Implement functions to encrypt and decrypt a data sample across all five required modes: CBC, CTR, GCM, CFB, and OFB.
 # Requirements: Functions must correctly handle unique requirements for each mode, including IV generation, padding (if applicable), and authentication tag (GCM only).
+# Analyze the timinings for different modes for different sizes of video files.
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad,unpad
