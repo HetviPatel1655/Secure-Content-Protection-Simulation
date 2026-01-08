@@ -2,7 +2,7 @@
 # Extract the byte array of the video file
 
 import os
-import media_demux_ffmpeg_cli
+import media_ffmpeg_cli
 from aes_engine import *
 from hybrid_encryption import *
 from Crypto.Random import get_random_bytes
@@ -10,20 +10,22 @@ from Crypto.PublicKey import RSA
 from digital_signature import *
 import time
 
+import media_ffmpeg_cli
+
 print("\nAES Encryption/Decryption Demo with Multiple Modes")
 
-video_files = ['Test Video 10MB.mp4', 'Test Video 25MB.mp4',  'Test Video 50MB.mp4', 'Test Video 100MB.mp4']
+# video_files = ['Test Video 10MB.mp4', 'Test Video 25MB.mp4',  'Test Video 50MB.mp4', 'Test Video 100MB.mp4', 'Test Video 200MB.mp4', 'Test Video 1664MB.mp4']
+video_files = ['Test Video 100MB.mp4', 'Test Video 200MB.mp4', 'Test Video 434MB.mp4']
 # Change index to test different sizes
 for file_data in video_files:
     print("\n" + "="*100)
     print("\nFile size(in mb):", os.path.getsize(file_data)/(1024*1024))
     print(f"\nProcessing file of size: {os.path.getsize(file_data)} bytes")
 
-    video_stream, audio_stream = media_demux_ffmpeg_cli.extract_streams(file_data, 'video_output.h264', 'audio_output.aac')
-# if (mode == 1):
+    video_stream, audio_stream = media_ffmpeg_cli.extract_streams(file_data, 'video_output.h264', 'audio_output.aac')
+
     print("\n--------------------CBC Mode Selected--------------------")
     start_time = time.time()
-
     # Encryption Video Streams
     key_video = get_random_bytes(16) # AES-128
     encrypted_video_stream, iv_video = aes_encrypt_cbc(video_stream, key_video)
@@ -32,14 +34,15 @@ for file_data in video_files:
     encrypted_audio_stream, iv_audio = aes_encrypt_cbc(audio_stream, key_audio)
     end_time = time.time()
     print(f"CBC Mode Time Taken for Encryption: {end_time - start_time:.4f} seconds")
-
     start_time = time.time()
     decrypted_video_stream = aes_decrypt_cbc(encrypted_video_stream, iv_video, key_video)
     decrypted_audio_stream = aes_decrypt_cbc(encrypted_audio_stream, iv_audio, key_audio)
+    # Merge back the audio-video file from the audio-video container using ffmpeg
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     end_time = time.time()
     print(f"CBC Mode Time Taken for Decryption: {end_time - start_time:.4f} seconds")
     
-# #elif (mode) == 2:
+
     print("\n--------------------CTR Mode Selected--------------------")
     start_time = time.time()
     key_video = get_random_bytes(16) 
@@ -51,9 +54,11 @@ for file_data in video_files:
     start_time = time.time()
     decrypted_video_stream = aes_decrypt_ctr(encrypyted_video_stream, nonce_video, key_video)
     decrypted_audio_stream = aes_decrypt_ctr(encrypyted_audio_stream, nonce_audio, key_audio)
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     end_time = time.time()
     print(f"CTR Mode Time Taken for Decryption: {end_time - start_time:.4f} seconds")
-# #elif (mode) == 3:
+
+
     print("\n--------------------CFB Mode Selected--------------------")
     start_time = time.time()
     key_video = get_random_bytes(16) 
@@ -66,8 +71,10 @@ for file_data in video_files:
     decrypted_video_stream = aes_decrypt_cfb(encrypted_video_stream, iv_video, key_video)
     decrypted_audio_stream = aes_decrypt_cfb(encrypted_audio_stream, iv_audio, key_audio)
     end_time = time.time()
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     print(f"CFB Mode Time Taken for Decryption: {end_time - start_time:.4f} seconds")
-# #elif (mode) == 4:
+
+
     print("\n--------------------OFB Mode Selected--------------------")
     start_time = time.time()
     key_video = get_random_bytes(16) 
@@ -79,9 +86,11 @@ for file_data in video_files:
     start_time = time.time()
     decrypted_video_stream = aes_decrypt_ofb(encrypted_video_stream, iv_video, key_video)
     decrypted_audio_stream = aes_decrypt_ofb(encrypted_audio_stream, iv_audio, key_audio)
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     end_time = time.time()
     print(f"OFB Mode Time Taken for Decryption: {end_time - start_time:.4f} seconds")
-# #elif (mode) == 5:
+
+
     print("\n--------------------GCM Mode Selected--------------------")
     start_time = time.time()
     key_video = get_random_bytes(16) 
@@ -93,9 +102,11 @@ for file_data in video_files:
     start_time = time.time()
     decrypted_video_stream = aes_decrypt_gcm(encrypted_video_stream, nonce_video, key_video, tag_video)
     decrypted_audio_stream = aes_decrypt_gcm(encrypted_audio_stream, nonce_audio, key_audio, tag_audio)
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     end_time = time.time()
     print(f"GCM Mode Time Taken for Decryption: {end_time - start_time:.4f} seconds")
-# #elif (mode) == 6:
+
+
     print("\n--------------------Hybrid Encryption Selected--------------")
     start_time = time.time()
     rsa_key_video = RSA.generate(2048)
@@ -114,12 +125,11 @@ for file_data in video_files:
     start_time = time.time()
     decrypted_video_stream = decrypt_content(encrypted_video_stream, private_key_video)
     decrypted_audio_stream = decrypt_content(encrypted_audio_stream, private_key_audio)
+    merged_file = media_ffmpeg_cli.merge_streams(decrypted_video_stream, decrypted_audio_stream, 'merged_output.mp4')
     end_time = time.time()
     print(f"Hybrid Decryption Time Taken: {end_time - start_time:.4f} seconds")
 
     print("\n------------------------------End of Processing for this file -------------------------------")
-
-
 
 # Demonstration of Digital Signature and Verification
 # Separate RSA keys used for encryption and signing (recommended practice)
