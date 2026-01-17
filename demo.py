@@ -14,8 +14,13 @@ import media_ffmpeg_cli
 
 print("\nAES Encryption/Decryption Demo with Multiple Modes")
 
-# video_files = ['Test Video 10MB.mp4', 'Test Video 25MB.mp4',  'Test Video 50MB.mp4', 'Test Video 100MB.mp4', 'Test Video 200MB.mp4', 'Test Video 1664MB.mp4']
-video_files = ['Test Video 100MB.mp4', 'Test Video 200MB.mp4', 'Test Video 434MB.mp4']
+# video_files = ['Test Video 10MB.mp4', 'Test Video 25MB.mp4',  'Test Video 50MB.mp4', 'Test Video 100MB.mp4', 'Test Video 200MB.mp4', 'Test Video 434MB.mp4', 'Test Video 1664MB.mp4']
+video_files = ['Test Video 582MB (with Audio).mp4', 'Test Video 776MB (with Audio).mp4']
+stream_check = []
+for file in video_files:
+    has_video, has_audio = media_ffmpeg_cli.check_streams(file)
+    stream_check.append(has_audio)
+        
 # Change index to test different sizes
 for file_data in video_files:
     print("\n" + "="*100)
@@ -64,7 +69,7 @@ for file_data in video_files:
     key_video = get_random_bytes(16) 
     encrypted_video_stream, iv_video = aes_encrypt_cfb(video_stream, key_video)
     key_audio = get_random_bytes(16)
-    encrypted_audio_stream, iv_audio     = aes_encrypt_cfb(audio_stream, key_audio)
+    encrypted_audio_stream, iv_audio = aes_encrypt_cfb(audio_stream, key_audio)
     end_time = time.time()
     print(f"CFB Mode Time Taken for Encryption: {end_time - start_time:.4f} seconds")
     start_time = time.time()
@@ -118,7 +123,6 @@ for file_data in video_files:
     private_key_audio = rsa_key_audio.export_key()
     public_key_audio = rsa_key_audio.publickey().export_key()
     encrypted_audio_stream = encrypt_content(audio_stream, public_key_audio)
-
     end_time = time.time()
     print(f"Hybrid Encryption Time Taken: {end_time - start_time:.4f} seconds")
 
