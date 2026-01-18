@@ -51,6 +51,8 @@ ffmpeg-*/
 encrypted_output.bin
 decrypted_output.bin
 
+temp.py
+
 # ===============================
 # OS / Editor files
 # ===============================
